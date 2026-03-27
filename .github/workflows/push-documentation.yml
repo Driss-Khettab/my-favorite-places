@@ -1,0 +1,61 @@
+name: Generate push documentation
+
+on:
+  push:
+
+jobs:
+  document-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - name: Generate push report
+        run: |
+          set -euo pipefail
+
+          mkdir -p docs/generated
+          short_sha="${GITHUB_SHA::7}"
+          output_file="docs/generated/push-${short_sha}.md"
+          previous_sha="$(git rev-parse "${GITHUB_SHA}^" 2>/dev/null || true)"
+
+          {
+            echo "# Push Documentation"
+            echo
+            echo "- Repository: ${GITHUB_REPOSITORY}"
+            echo "- Branch: ${GITHUB_REF_NAME}"
+            echo "- Commit: ${GITHUB_SHA}"
+            echo "- Triggered by: ${GITHUB_ACTOR}"
+            echo
+            echo "## Changed files"
+
+            if [ -n "${previous_sha}" ]; then
+              changed_files="$(git diff --name-only "${previous_sha}" "${GITHUB_SHA}")"
+              if [ -n "${changed_files}" ]; then
+                printf '%s\n' "${changed_files}" | sed 's/^/- /'
+              else
+                echo "- No file changes detected"
+              fi
+            else
+              echo "- Initial push (no previous commit available)"
+            fi
+
+            echo
+            echo "## Docker tagging policy"
+            echo "- Server image: ghcr.io/${GITHUB_REPOSITORY,,}-server:{latest|dev|sha-<commit>}"
+            echo "- Client image: ghcr.io/${GITHUB_REPOSITORY,,}-client:{latest|dev|sha-<commit>}"
+          } > "${output_file}"
+
+          cat "${output_file}" >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload push documentation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: push-documentation-${{ github.sha }}
+          path: docs/generated/*.md
+          if-no-files-found: error
