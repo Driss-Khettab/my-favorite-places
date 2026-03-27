@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import "./App.css";
 
 type Address = {
