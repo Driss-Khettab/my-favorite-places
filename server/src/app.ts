@@ -3,7 +3,7 @@ import apiRouter from "./router";
 
 const app = express();
 
-// use JSON for req.body
+// use JSON for req.bodyyy
 app.use(express.json());
 
 // use the router to answers request on /api

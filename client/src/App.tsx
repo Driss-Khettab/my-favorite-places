@@ -129,7 +129,7 @@ function App() {
             Register
           </button>
         </form>
-        {message && <p className="message">{message}</p>}
+        {message && <p className="message(s)">{message}</p>}
       </div>
     );
   }
