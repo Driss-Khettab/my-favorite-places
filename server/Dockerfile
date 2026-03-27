@@ -1,4 +1,4 @@
-FROM node:20-alpine AS build
+FROM public.ecr.aws/docker/library/node:20-alpine AS build
 WORKDIR /app
 
 COPY package*.json ./
@@ -9,7 +9,7 @@ COPY src ./src
 RUN npm run build
 
 
-FROM node:20-alpine AS runtime
+FROM public.ecr.aws/docker/library/node:20-alpine AS runtime
 WORKDIR /app
 
 COPY package*.json ./
