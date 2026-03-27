@@ -1,0 +1,18 @@
+services:
+  server:
+    image: ghcr.io/driss-khettab/my-favorite-places-server:main
+    container_name: my-favorite-places-server
+    environment:
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  client:
+    image: ghcr.io/driss-khettab/my-favorite-places-client:main
+    container_name: my-favorite-places-client
+    depends_on:
+      - server
+    ports:
+      - "80:80"
+    restart: unless-stopped
