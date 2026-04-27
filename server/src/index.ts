@@ -8,7 +8,7 @@ async function startApp() {
 
   try {
     await datasource.initialize();
-    console.log(`✅ connected to Sqlite db`);
+    console.log(`✅ connected to Sqlite dbb`);
 
     app.listen(port, (err) => {
       if (err) {
